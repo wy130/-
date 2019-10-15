@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+-->
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+	"http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<!-- START SNIPPET: xworkSample -->
+<struts>
+	<constant name="strtus.custom.i18n.resources" value="msg"></constant>
+	<constant name="struts.devMode" value="true"/>
+	<constant name="struts.enable.DynamicMehtodInvocation" value="true"/>
+     <!-- 告知Struts2运行时使用Spring来创建对象 -->
+    <constant name="struts.objectFactory" value="spring" />
+	<package name="default"  extends="struts-default">
+       <action name="reguser" class="regist_action" >
+        <result name="ok">/Success.jsp</result>
+        <result name="error">/Error.jsp</result>
+       </action>
+       
+        <action name="login1" class="login_action">
+        <result name="success">/admin.jsp</result>
+        <result name="ok">/star.jsp</result>
+         <result name="error">/error1.jsp</result>
+      </action>    
+       <action name="up1" class="star_action" >
+         <result name="ok">/admin.jsp</result>
+         <result name="error">/admin.jsp</result>
+       </action>
+       <action name="news" class="news_action" >
+         <result name="ok">/news.jsp</result>
+         <result name="error">/index.jsp</result>
+       </action>
+     
+     </package> 
+</struts>

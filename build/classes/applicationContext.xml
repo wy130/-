@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"  
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx  
+         http://www.springframework.org/schema/tx/spring-tx.xsd  
+         http://www.springframework.org/schema/aop  
+         http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/context  
+         http://www.springframework.org/schema/context/spring-context.xsd">
+        
+    
+	<bean id="user" class="pojo.User" scope="prototype">
+	</bean>
+	<bean id="star" class="pojo.Star" scope="prototype">
+	</bean>
+	<bean id="newsinfo" class="pojo.NewsInfo" scope="prototype">
+	</bean>
+	<bean id="userDao" class="dao.UserDao" scope="prototype">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean id="userService" class="service.UserService" scope="prototype">
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+	<bean id="starDao" class="dao.StarDao" scope="prototype">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean id="starService" class="service.StarService" scope="prototype">
+		<property name="starDao" ref="starDao"></property>
+	</bean>
+	<bean id="newsDao" class="dao.NewsDao" scope="prototype">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	<bean id="newsService" class="service.NewsService" scope="prototype">
+		<property name="newsDao" ref="newsDao"></property>
+	</bean>
+	
+	<bean id="regist_action" class="action.RegistAction" scope="prototype">
+	  <property name="user" ref="user"/>
+	  <property name="userService" ref="userService"></property>
+	</bean>
+	<bean id="login_action" class="action.LoginAction" scope="prototype">
+	  <property name="userService" ref="userService"></property>
+	</bean>
+	<bean id="star_action" class="action.StarAction" scope="prototype">
+	  <property name="userService" ref="userService"></property>
+	  <property name="starService" ref="starService"></property>
+	</bean>
+	<bean id="news_action" class="action.NewsAction" scope="prototype">
+	  <property name="newsService" ref="newsService"></property>
+	</bean>
+	<bean id="dataSource"  class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"/>         
+    	<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/star"/>         
+   		<property name="user" value="root"/>         
+   	 	<property name="password" value="root"/>  
+	</bean>
+	<!-- 添加sessionFactory bane ，注意，该类是Spring提供的 -->
+     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+         <!-- 注入Hibernate 配置文件路径,前面要加上  classpath:-->
+         <property name="dataSource" ref="dataSource"/>
+	    <!-- <property name="hibernateProperties">
+	       <props>
+	         <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+	         <prop key="hibernate.show_sql">true</prop>
+	       </props>
+	     </property>	
+	     <property name="mappingResources">
+			<list>
+	           <value>demo/test/beans/UserInfo.hbm.xml</value>
+			</list>
+	      </property>	 -->
+         <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+     </bean>
+	
+	<bean id="txManager"  
+        class="org.springframework.orm.hibernate5.HibernateTransactionManager">  
+        <property name="sessionFactory" ref="sessionFactory" />  
+    </bean>  
+    <tx:advice id="txAdvice" transaction-manager="txManager">  
+        <tx:attributes>  
+            <tx:method name="*" isolation="DEFAULT" propagation="REQUIRED"/>  
+        </tx:attributes>  
+    </tx:advice>  
+    <aop:config>  
+        <aop:pointcut id="bizMethods" expression="execution(* service.*.*(..))" />  
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="bizMethods" /> 
+    </aop:config> 
+	
+</beans>
